@@ -9,8 +9,10 @@ public class OrcamentoModel {
     private double custoItens;
     private double imposto;
     private double desconto;
-    private double custoConsumidor;
+    private double custoConsumidor; //valor final
     private boolean efetivado;
+    //adicionar data
+    //adicionar nome do cliente
 
     public OrcamentoModel(long id) {
         this.id = id;

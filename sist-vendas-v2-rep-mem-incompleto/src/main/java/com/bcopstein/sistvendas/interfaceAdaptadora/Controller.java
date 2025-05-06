@@ -32,6 +32,8 @@ public class Controller {
         this.efetivaOrcamento = efetivaOrcamento;
     }
 
+// chamar funções para os endpoints nos Casos de Uso (que chamam os servicos)
+
     @GetMapping("")
     @CrossOrigin(origins = "*")
     public String welcomeMessage(){

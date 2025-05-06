@@ -7,6 +7,7 @@ import java.util.List;
 public class PedidoModel {
     private long id;
     private List<ItemPedidoModel> itens;
+    // adicionar local
 
     public PedidoModel(long id) {
         this.id = id;
