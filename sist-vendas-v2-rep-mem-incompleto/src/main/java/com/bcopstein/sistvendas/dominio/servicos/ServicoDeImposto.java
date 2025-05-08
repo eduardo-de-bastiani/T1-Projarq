@@ -1,7 +1,9 @@
 package com.bcopstein.sistvendas.dominio.servicos;
 
 public class ServicoDeImposto {
-    //possui a logica de escolha calculo de imposto por regiao (ICalculoImposto)
+    public ServicoDeImposto() {
+        
+    }
 
-    //seitch case de regioes
+    
 }

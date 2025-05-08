@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bcopstein.sistvendas.auxiliares.Localidade;
 import com.bcopstein.sistvendas.dominio.modelos.OrcamentoModel;
 import com.bcopstein.sistvendas.dominio.modelos.PedidoModel;
 import com.bcopstein.sistvendas.dominio.modelos.ProdutoModel;
@@ -15,11 +16,13 @@ import com.bcopstein.sistvendas.dominio.persistencia.IOrcamentoRepositorio;
 public class ServicoDeVendas {
     private IOrcamentoRepositorio orcamentos;
     private IEstoqueRepositorio estoque;
+    private ServicoDeImposto servicoDeImposto;
 
     @Autowired
-    public ServicoDeVendas(IOrcamentoRepositorio orcamentos,IEstoqueRepositorio estoque){
+    public ServicoDeVendas(IOrcamentoRepositorio orcamentos,IEstoqueRepositorio estoque, ServicoDeImposto servicoDeImposto){
         this.orcamentos = orcamentos;
         this.estoque = estoque;
+        this.servicoDeImposto = servicoDeImposto;
     }
     
     public List<ProdutoModel> produtosDisponiveis() {

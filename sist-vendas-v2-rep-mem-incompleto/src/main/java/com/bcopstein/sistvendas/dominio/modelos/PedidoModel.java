@@ -4,14 +4,25 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.bcopstein.sistvendas.auxiliares.Localidade;
+
 public class PedidoModel {
     private long id;
     private List<ItemPedidoModel> itens;
-    // adicionar local
+    private Localidade local;
 
-    public PedidoModel(long id) {
+    public void setLocal(Localidade local) {
+        this.local = local;
+    }
+
+    public Localidade getLocal() {
+        return local;
+    }
+
+    public PedidoModel(long id, Localidade local) {
         this.id = id;
         this.itens = new LinkedList<>();
+        this.local = local;
     }
 
     public long getId() {

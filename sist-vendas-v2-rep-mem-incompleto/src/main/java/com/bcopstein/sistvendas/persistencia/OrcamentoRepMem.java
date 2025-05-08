@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.bcopstein.sistvendas.auxiliares.Localidade;
 import com.bcopstein.sistvendas.dominio.modelos.ItemPedidoModel;
 import com.bcopstein.sistvendas.dominio.modelos.OrcamentoModel;
 import com.bcopstein.sistvendas.dominio.modelos.PedidoModel;
@@ -24,7 +25,7 @@ public class OrcamentoRepMem implements IOrcamentoRepositorio{
 
         // Cria Orcamento
         OrcamentoModel orcamento = new OrcamentoModel(1);
-        PedidoModel pedido = new PedidoModel(1);
+        PedidoModel pedido = new PedidoModel(1, Localidade.RS);
         ProdutoModel p = produtos.consultaPorId(10);
         ItemPedidoModel item = new ItemPedidoModel(p, 2);
         pedido.addItem(item);
@@ -36,7 +37,7 @@ public class OrcamentoRepMem implements IOrcamentoRepositorio{
 
         // Cria Orcamento
         orcamento = new OrcamentoModel(2);
-        pedido = new PedidoModel(2);
+        pedido = new PedidoModel(2, Localidade.PB);
         p = produtos.consultaPorId(40);
         item = new ItemPedidoModel(p,1);
         pedido.addItem(item);

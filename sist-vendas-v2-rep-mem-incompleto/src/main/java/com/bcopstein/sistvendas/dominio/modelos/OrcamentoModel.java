@@ -3,16 +3,16 @@ package com.bcopstein.sistvendas.dominio.modelos;
 import java.util.LinkedList;
 import java.util.List;
 
+
 public class OrcamentoModel {
     private long id;
     private List<ItemPedidoModel> itens;
     private double custoItens;
     private double imposto;
     private double desconto;
-    private double custoConsumidor; //valor final
+    private double custoConsumidor; 
     private boolean efetivado;
-    //adicionar data
-    //adicionar nome do cliente
+
 
     public OrcamentoModel(long id) {
         this.id = id;
@@ -82,4 +82,5 @@ public class OrcamentoModel {
     public void efetiva(){
         efetivado = true;
     }
+
 }
