@@ -11,14 +11,6 @@ public class PedidoModel {
     private List<ItemPedidoModel> itens;
     private Localidade local;
 
-    public void setLocal(Localidade local) {
-        this.local = local;
-    }
-
-    public Localidade getLocal() {
-        return local;
-    }
-
     public PedidoModel(long id, Localidade local) {
         this.id = id;
         this.itens = new LinkedList<>();
@@ -27,6 +19,14 @@ public class PedidoModel {
 
     public long getId() {
         return id;
+    }
+
+    public void setLocal(Localidade local) {
+        this.local = local;
+    }
+
+    public Localidade getLocal() {
+        return local;
     }
 
     public List<ItemPedidoModel> getItens() {

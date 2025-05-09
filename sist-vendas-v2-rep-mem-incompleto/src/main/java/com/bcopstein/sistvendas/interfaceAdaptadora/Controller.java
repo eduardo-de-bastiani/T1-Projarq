@@ -16,6 +16,7 @@ import com.bcopstein.sistvendas.aplicacao.casosDeUso.ProdutosDisponiveisUC;
 import com.bcopstein.sistvendas.aplicacao.dtos.ItemPedidoDTO;
 import com.bcopstein.sistvendas.aplicacao.dtos.OrcamentoDTO;
 import com.bcopstein.sistvendas.aplicacao.dtos.ProdutoDTO;
+import com.bcopstein.sistvendas.auxiliares.Localidade;
 
 @RestController
 public class Controller {
@@ -48,8 +49,8 @@ public class Controller {
 
     @PostMapping("novoOrcamento")
     @CrossOrigin(origins = "*")
-    public OrcamentoDTO novoOrcamento(@RequestBody List<ItemPedidoDTO> itens){
-        return criaOrcamento.run(itens);
+    public OrcamentoDTO novoOrcamento(@RequestBody List<ItemPedidoDTO> itens, Localidade localidade){
+        return criaOrcamento.run(itens, localidade);
     }
 
     @GetMapping("efetivaOrcamento/{id}")

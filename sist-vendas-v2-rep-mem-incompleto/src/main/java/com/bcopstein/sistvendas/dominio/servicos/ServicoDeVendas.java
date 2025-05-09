@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.bcopstein.sistvendas.auxiliares.Localidade;
+import com.bcopstein.sistvendas.dominio.modelos.ItemPedidoModel;
 import com.bcopstein.sistvendas.dominio.modelos.OrcamentoModel;
 import com.bcopstein.sistvendas.dominio.modelos.PedidoModel;
 import com.bcopstein.sistvendas.dominio.modelos.ProdutoModel;
@@ -39,7 +39,11 @@ public class ServicoDeVendas {
         double custoItens = novoOrcamento.getItens().stream()
             .mapToDouble(it->it.getProduto().getPrecoUnitario()*it.getQuantidade())
             .sum();
-        novoOrcamento.setImposto(custoItens * 0.1);
+
+        // Aqui devemos calcular o imposto de acordo com a localidade -> Devemos chamar o Strategy
+        double valorImposto = servicoDeImposto.calculaImposto(novoOrcamento, pedido.getLocal());
+        novoOrcamento.setImposto(valorImposto);
+
         if (novoOrcamento.getItens().size() > 5){
                 novoOrcamento.setDesconto(custoItens * 0.05);
             }else{
@@ -51,14 +55,28 @@ public class ServicoDeVendas {
  
     public OrcamentoModel efetivaOrcamento(long id) {
         // Recupera o orçamento
-    
+        OrcamentoModel orcamento = orcamentos.recuperaPorId(id);
+        if (orcamento == null || orcamento.isEfetivado()) return null;
+        
         // Verifica se tem quantidade em estoque para todos os itens
+        List<ProdutoModel> produtosDisponiveis = produtosDisponiveis();
+        for (ItemPedidoModel item : orcamento.getItens()) {
+            ProdutoModel produto = item.getProduto();
+            if (!produtosDisponiveis.contains(produto) || estoque.quantidadeEmEstoque(produto.getId()) < item.getQuantidade()) {
+                return null; 
+            }
+        }
 
         // Se tem quantidade para todos os itens, da baixa no estoque para todos
+        for (ItemPedidoModel item : orcamento.getItens()) {
+            ProdutoModel produto = item.getProduto();
+            estoque.baixaEstoque(produto.getId(), item.getQuantidade());
+        }
 
         // Marca o orcamento como efetivado
+        orcamento.efetiva();
 
         // Retorna o orçamento marcado como efetivado ou não conforme disponibilidade do estoque
-        return null;
+        return orcamento;
     }
 }
