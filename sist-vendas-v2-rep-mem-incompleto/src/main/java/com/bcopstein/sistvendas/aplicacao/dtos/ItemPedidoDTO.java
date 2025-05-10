@@ -1,6 +1,7 @@
 package com.bcopstein.sistvendas.aplicacao.dtos;
 
 import com.bcopstein.sistvendas.dominio.modelos.ItemPedidoModel;
+import com.bcopstein.sistvendas.dominio.modelos.ProdutoModel;
 
 public class ItemPedidoDTO {
     private long idProduto;
@@ -26,5 +27,9 @@ public class ItemPedidoDTO {
 
     public static ItemPedidoDTO fromModel(ItemPedidoModel item){
         return new ItemPedidoDTO(item.getProduto().getId(),item.getQuantidade());
+    }
+
+    public ItemPedidoModel toModel(ProdutoModel produto) {
+        return new ItemPedidoModel(produto, this.qtdade);
     }
 }

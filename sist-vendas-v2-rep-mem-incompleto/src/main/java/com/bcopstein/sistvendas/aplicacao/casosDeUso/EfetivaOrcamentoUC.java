@@ -17,6 +17,10 @@ public class EfetivaOrcamentoUC {
     }
 
     public OrcamentoDTO run(long idOrcamento){
-        return null;
+        OrcamentoModel orcamentoEfetivado = servicoDeVendas.efetivaOrcamento(idOrcamento);
+        if (orcamentoEfetivado == null) {
+            throw new IllegalArgumentException("Houve um erro ao efetivar o orçamento.");
+        }
+        return OrcamentoDTO.fromModel(orcamentoEfetivado);
     }
 }

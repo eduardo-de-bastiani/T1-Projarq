@@ -12,7 +12,7 @@ public class OrcamentoModel {
     private double desconto;
     private double custoConsumidor; 
     private boolean efetivado;
-
+    // Falta nome do cliente e data do orcamento
 
     public OrcamentoModel(long id) {
         this.id = id;

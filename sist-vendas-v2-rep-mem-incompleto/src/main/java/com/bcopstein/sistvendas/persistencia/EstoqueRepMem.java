@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.bcopstein.sistvendas.aplicacao.dtos.ItemEstoqueDTO;
 import com.bcopstein.sistvendas.dominio.modelos.ItemDeEstoqueModel;
 import com.bcopstein.sistvendas.dominio.modelos.ProdutoModel;
 import com.bcopstein.sistvendas.dominio.persistencia.IEstoqueRepositorio;
@@ -67,5 +68,33 @@ public class EstoqueRepMem implements IEstoqueRepositorio{
         }
         int novaQuantidade = item.getQuantidade() - qtdade;
         item.setQuantidade(novaQuantidade);
+    }
+
+    @Override
+    public void adicionaEstoque(long id, int qtdade) {
+        ItemDeEstoqueModel item = itens.stream()
+            .filter(it->it.getProduto().getId() == id)
+            .findAny()
+            .orElse(null);
+        if (item == null){
+            throw new IllegalArgumentException("Produto inexistente");
+        }
+        int novaQuantidade = item.getQuantidade() + qtdade;
+        item.setQuantidade(novaQuantidade);
+    }
+
+    @Override
+    public List<ItemEstoqueDTO> estoqueCompleto() {
+        return itens.stream()
+            .map(it->ItemEstoqueDTO.fromModel(it.getProduto(), it.getQuantidade()))
+            .toList();
+    }
+
+    @Override
+    public List<ItemEstoqueDTO> estoquePorProdutos(List<Long> idsProdutos) {
+        return itens.stream()
+            .filter(it -> idsProdutos.contains(it.getProduto().getId()))
+            .map(it -> ItemEstoqueDTO.fromModel(it.getProduto(), it.getQuantidade()))
+            .toList();
     }
 }
