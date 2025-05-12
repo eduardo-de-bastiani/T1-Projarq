@@ -14,13 +14,14 @@ import com.bcopstein.sistvendas.aplicacao.casosDeUso.ChegadaProdutoUC;
 import com.bcopstein.sistvendas.aplicacao.casosDeUso.CriaOrcamentoUC;
 import com.bcopstein.sistvendas.aplicacao.casosDeUso.EfetivaOrcamentoUC;
 import com.bcopstein.sistvendas.aplicacao.casosDeUso.EstoquePorProdutosUC;
+import com.bcopstein.sistvendas.aplicacao.casosDeUso.OrcamentosEfetivadosUC;
 import com.bcopstein.sistvendas.aplicacao.casosDeUso.ProdutosDisponiveisUC;
 import com.bcopstein.sistvendas.aplicacao.casosDeUso.QuantidadeDisponivelUC;
 import com.bcopstein.sistvendas.aplicacao.dtos.ItemEstoqueDTO;
 import com.bcopstein.sistvendas.aplicacao.dtos.ItemPedidoDTO;
+import com.bcopstein.sistvendas.aplicacao.dtos.NovoOrcamentoDTO;
 import com.bcopstein.sistvendas.aplicacao.dtos.OrcamentoDTO;
 import com.bcopstein.sistvendas.aplicacao.dtos.ProdutoDTO;
-import com.bcopstein.sistvendas.auxiliares.Localidade;
 
 @RestController
 public class Controller {
@@ -30,6 +31,7 @@ public class Controller {
     private ChegadaProdutoUC chegadaProduto;
     private QuantidadeDisponivelUC estoqueCompleto;
     private EstoquePorProdutosUC estoquePorProdutos;
+    private OrcamentosEfetivadosUC orcamentosEfetivados;
 
     @Autowired
     public Controller(ProdutosDisponiveisUC produtosDisponiveis,
@@ -37,18 +39,16 @@ public class Controller {
                       EfetivaOrcamentoUC efetivaOrcamento, 
                       ChegadaProdutoUC chegadaProduto,
                       QuantidadeDisponivelUC estoqueCompleto,
-                      EstoquePorProdutosUC estoquePorProdutos) {
+                      EstoquePorProdutosUC estoquePorProdutos,
+                      OrcamentosEfetivadosUC orcamentosEfetivados) {
         this.produtosDisponiveis = produtosDisponiveis;
         this.criaOrcamento = criaOrcamento;
         this.efetivaOrcamento = efetivaOrcamento;
         this.chegadaProduto = chegadaProduto;
         this.estoqueCompleto = estoqueCompleto;
         this.estoquePorProdutos = estoquePorProdutos;
+        this.orcamentosEfetivados = orcamentosEfetivados;
     }
-
-    /*  Não tem data ainda
-        · Retornar a lista de orçamentos efetivados em um determinado período (informar data inicial e data final) 
-    */
 
     @GetMapping("")
     @CrossOrigin(origins = "*")
@@ -66,8 +66,8 @@ public class Controller {
     // · Solicitar orçamento para um pedido (lista de itens)
     @PostMapping("novoOrcamento")
     @CrossOrigin(origins = "*")
-    public OrcamentoDTO novoOrcamento(@RequestBody List<ItemPedidoDTO> itens, Localidade localidade){
-        return criaOrcamento.run(itens, localidade);
+    public OrcamentoDTO novoOrcamento(@RequestBody NovoOrcamentoDTO pedido){
+        return criaOrcamento.run(pedido.getItens(), pedido.getLocalidade(), pedido.getData());
     }
 
     // · Efetivar orçamento indicado se ainda for válido e houver produtos disponíveis
@@ -98,4 +98,10 @@ public class Controller {
         return estoquePorProdutos.run(idsProdutos);
     }
 
+    // · Retornar a lista de orçamentos efetivados em um determinado período (informar data inicial e data final) 
+    @PostMapping("orcamentosEfetivados")
+    @CrossOrigin(origins = "*")
+    public List<OrcamentoDTO> orcamentosEfetivados(@RequestBody List<String> datas) {
+        return orcamentosEfetivados.run(datas.get(0), datas.get(1));
+    }
 }

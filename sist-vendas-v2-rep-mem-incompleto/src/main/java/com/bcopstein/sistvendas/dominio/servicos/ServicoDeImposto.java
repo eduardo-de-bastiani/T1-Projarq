@@ -18,7 +18,7 @@ public class ServicoDeImposto {
     }
 
     public double calculaImposto(OrcamentoModel orcamento, Localidade local) {
-        ICalculoImposto impostoComposto = impostoFactory.criar(local);
+        ICalculoImposto impostoComposto = this.impostoFactory.criar(local);
         return impostoComposto.calculoimposto(orcamento);
     }
 }

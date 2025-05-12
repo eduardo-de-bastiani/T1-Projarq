@@ -23,7 +23,7 @@ public class ServicoDeEstoque{
     }
  
     public List<ProdutoModel> produtosDisponiveis(){
-        return estoque.todosComEstoque();
+        return this.estoque.todosComEstoque();
     }
 
     public ProdutoModel produtoPorCodigo(long id){
@@ -31,24 +31,24 @@ public class ServicoDeEstoque{
     }
 
     public int qtdadeEmEstoque(long id){
-        return estoque.quantidadeEmEstoque(id);
+        return this.estoque.quantidadeEmEstoque(id);
     }
 
     public void baixaEstoque(long id,int qtdade){
-        estoque.baixaEstoque(id,qtdade);
+        this.estoque.baixaEstoque(id,qtdade);
     }  
 
     public void chegadaDeProdutos(List<ItemPedidoModel> produtosModel) {
         for (ItemPedidoModel produto : produtosModel) {
-            estoque.adicionaEstoque(produto.getProduto().getId(), produto.getQuantidade());
+            this.estoque.adicionaEstoque(produto.getProduto().getId(), produto.getQuantidade());
         }
     }
 
     public List<ItemEstoqueDTO> estoqueCompleto() {
-        return estoque.estoqueCompleto();
+        return this.estoque.estoqueCompleto();
     }
 
     public List<ItemEstoqueDTO> estoquePorProdutos(List<Long> idsProdutos) {
-        return estoque.estoquePorProdutos(idsProdutos);
+        return this.estoque.estoquePorProdutos(idsProdutos);
     }
 }

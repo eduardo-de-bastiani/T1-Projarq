@@ -1,7 +1,10 @@
 package com.bcopstein.sistvendas.dominio.modelos;
 
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.bcopstein.sistvendas.auxiliares.Localidade;
 
 
 public class OrcamentoModel {
@@ -12,7 +15,8 @@ public class OrcamentoModel {
     private double desconto;
     private double custoConsumidor; 
     private boolean efetivado;
-    // Falta nome do cliente e data do orcamento
+    private Localidade localidade;
+    private Date data;
 
     public OrcamentoModel(long id) {
         this.id = id;
@@ -83,4 +87,19 @@ public class OrcamentoModel {
         efetivado = true;
     }
 
+    public Localidade getLocalidade() {
+        return localidade;
+    }
+
+    public void setLocalidade(Localidade localidade) {
+        this.localidade = localidade;
+    }
+
+    public Date getData() {
+        return data;
+    }
+
+    public void setData(Date data) {
+        this.data = data;
+    }
 }

@@ -1,5 +1,6 @@
 package com.bcopstein.sistvendas.aplicacao.casosDeUso;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,8 @@ public class CriaOrcamentoUC {
         this.servicoDeEstoque = servicoDeEstoque;
     }
 
-    public OrcamentoDTO run(List<ItemPedidoDTO> itens, Localidade localidade) {
-        PedidoModel pedido = new PedidoModel(++idCount, localidade);
+    public OrcamentoDTO run(List<ItemPedidoDTO> itens, Localidade localidade, Date data){ 
+        PedidoModel pedido = new PedidoModel(++idCount, localidade, data);
         for(ItemPedidoDTO item:itens){
             ProdutoModel produto = servicoDeEstoque.produtoPorCodigo(item.getIdProduto());
             ItemPedidoModel itemPedido = new ItemPedidoModel(produto, item.getQtdade());

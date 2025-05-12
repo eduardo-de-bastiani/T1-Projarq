@@ -1,8 +1,11 @@
 package com.bcopstein.sistvendas.aplicacao.dtos;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.bcopstein.sistvendas.auxiliares.Localidade;
 import com.bcopstein.sistvendas.dominio.modelos.ItemPedidoModel;
 import com.bcopstein.sistvendas.dominio.modelos.OrcamentoModel;
 
@@ -14,8 +17,10 @@ public class OrcamentoDTO {
     private double desconto;
     private double custoConsumidor;
     private boolean efetivado;
+    private Localidade localidade;
+    private Date data;
 
-    public OrcamentoDTO(long id,List<ItemPedidoDTO> itens,double custoItens,double imposto,double desconto, double custoConsumidor,boolean efetivado) {
+    public OrcamentoDTO(long id,List<ItemPedidoDTO> itens,double custoItens,double imposto,double desconto, double custoConsumidor,boolean efetivado, Localidade localidade, Date data){
         this.id = id;
         this.itens = itens;
         this.custoItens = custoItens;
@@ -23,6 +28,8 @@ public class OrcamentoDTO {
         this.desconto = desconto;
         this.custoConsumidor = custoConsumidor;
         this.efetivado = efetivado;
+        this.localidade = localidade;
+        this.data = data;
     }
 
     public long getId() {
@@ -57,12 +64,26 @@ public class OrcamentoDTO {
         efetivado = true;
     }
 
+    public Localidade getLocalidade() {
+        return localidade;
+    }
+
+    public Date getData() {
+        return data;
+    }
+
     public static OrcamentoDTO fromModel(OrcamentoModel orcamento){
         List<ItemPedidoDTO> itens = new ArrayList<>(orcamento.getItens().size());
         for(ItemPedidoModel ip:orcamento.getItens()){
             itens.add(ItemPedidoDTO.fromModel(ip));
         }
         return new OrcamentoDTO(orcamento.getId(),itens,orcamento.getCustoItens(),
-                                orcamento.getImposto(),orcamento.getDesconto(),orcamento.getCustoConsumidor(),orcamento.isEfetivado());
+                                orcamento.getImposto(),orcamento.getDesconto(),orcamento.getCustoConsumidor(),orcamento.isEfetivado(), orcamento.getLocalidade(), orcamento.getData());
+    }
+
+    public static List<OrcamentoDTO> fromModel(List<OrcamentoModel> orcamentos){
+        return orcamentos.stream()
+                        .map(OrcamentoDTO::fromModel)
+                        .collect(Collectors.toList());
     }
 }

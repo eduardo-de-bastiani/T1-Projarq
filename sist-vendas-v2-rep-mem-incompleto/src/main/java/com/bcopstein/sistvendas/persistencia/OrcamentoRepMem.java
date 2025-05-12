@@ -1,5 +1,6 @@
 package com.bcopstein.sistvendas.persistencia;
 
+import java.sql.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class OrcamentoRepMem implements IOrcamentoRepositorio{
 
         // Cria Orcamento
         OrcamentoModel orcamento = new OrcamentoModel(1);
-        PedidoModel pedido = new PedidoModel(1, Localidade.RS);
+        PedidoModel pedido = new PedidoModel(1, Localidade.RS, Date.valueOf("2025-05-11"));
         ProdutoModel p = produtos.consultaPorId(10);
         ItemPedidoModel item = new ItemPedidoModel(p, 2);
         pedido.addItem(item);
@@ -37,7 +38,7 @@ public class OrcamentoRepMem implements IOrcamentoRepositorio{
 
         // Cria Orcamento
         orcamento = new OrcamentoModel(2);
-        pedido = new PedidoModel(2, Localidade.PB);
+        pedido = new PedidoModel(2, Localidade.PB, Date.valueOf("2025-05-11"));
         p = produtos.consultaPorId(40);
         item = new ItemPedidoModel(p,1);
         pedido.addItem(item);
@@ -83,5 +84,23 @@ public class OrcamentoRepMem implements IOrcamentoRepositorio{
             throw new IllegalArgumentException("Orcamento não encontrado");
         }
         orcamento.efetiva();
+    }
+
+    @Override
+    public List<OrcamentoModel> recuperaData(String dataInicial, String dataFinal) {
+        List<OrcamentoModel> orcamentosFiltrados = new LinkedList<>();
+
+        Date dataIni = Date.valueOf(dataInicial);
+        Date dataFin = Date.valueOf(dataFinal);
+
+        for (OrcamentoModel orcamento : orcamentos) {
+            if (orcamento.isEfetivado() && 
+                orcamento.getData().compareTo(dataIni) >= 0 && 
+                orcamento.getData().compareTo(dataFin) <= 0) {
+                orcamentosFiltrados.add(orcamento);
+            }
+        }
+        
+        return orcamentosFiltrados;
     }
 }

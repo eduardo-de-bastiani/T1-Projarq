@@ -35,6 +35,8 @@ public class ServicoDeVendas {
 
     public OrcamentoModel criaOrcamento(PedidoModel pedido) {
         var novoOrcamento = new OrcamentoModel();
+        novoOrcamento.setLocalidade(pedido.getLocal());
+        novoOrcamento.setData(pedido.getData());
         novoOrcamento.addItensPedido(pedido);
         double custoItens = novoOrcamento.getItens().stream()
             .mapToDouble(it->it.getProduto().getPrecoUnitario()*it.getQuantidade())
@@ -55,14 +57,14 @@ public class ServicoDeVendas {
  
     public OrcamentoModel efetivaOrcamento(long id) {
         // Recupera o orçamento
-        OrcamentoModel orcamento = orcamentos.recuperaPorId(id);
+        OrcamentoModel orcamento = this.orcamentos.recuperaPorId(id);
         if (orcamento == null || orcamento.isEfetivado()) return null;
         
         // Verifica se tem quantidade em estoque para todos os itens
         List<ProdutoModel> produtosDisponiveis = produtosDisponiveis();
         for (ItemPedidoModel item : orcamento.getItens()) {
             ProdutoModel produto = item.getProduto();
-            if (!produtosDisponiveis.contains(produto) || estoque.quantidadeEmEstoque(produto.getId()) < item.getQuantidade()) {
+            if (!produtosDisponiveis.contains(produto) || this.estoque.quantidadeEmEstoque(produto.getId()) < item.getQuantidade()) {
                 return null; 
             }
         }
@@ -70,7 +72,7 @@ public class ServicoDeVendas {
         // Se tem quantidade para todos os itens, da baixa no estoque para todos
         for (ItemPedidoModel item : orcamento.getItens()) {
             ProdutoModel produto = item.getProduto();
-            estoque.baixaEstoque(produto.getId(), item.getQuantidade());
+            this.estoque.baixaEstoque(produto.getId(), item.getQuantidade());
         }
 
         // Marca o orcamento como efetivado
@@ -78,5 +80,9 @@ public class ServicoDeVendas {
 
         // Retorna o orçamento marcado como efetivado ou não conforme disponibilidade do estoque
         return orcamento;
+    }
+
+    public List<OrcamentoModel> orcamentosDatas(String dataInicial, String dataFinal) {
+        return this.orcamentos.recuperaData(dataInicial, dataFinal);
     }
 }
