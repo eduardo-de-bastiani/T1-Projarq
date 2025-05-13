@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.bcopstein.sistvendas.aplicacao.dtos.ItemEstoqueDTO;
+import com.bcopstein.sistvendas.dominio.modelos.ItemDeEstoqueModel;
 import com.bcopstein.sistvendas.dominio.servicos.ServicoDeEstoque;
 
 @Component
@@ -18,6 +19,9 @@ public class QuantidadeDisponivelUC {
     }
 
     public List<ItemEstoqueDTO> run() {
-        return servicoEstoque.estoqueCompleto();
+        List<ItemDeEstoqueModel> itemEstoque = servicoEstoque.estoqueCompleto();
+        return itemEstoque.stream()
+                .map(item -> ItemEstoqueDTO.fromModel(item.getProduto(), item.getQuantidade()))
+                .toList();
     }
 }

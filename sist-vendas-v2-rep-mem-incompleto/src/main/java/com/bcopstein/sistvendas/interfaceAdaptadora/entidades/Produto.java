@@ -1,5 +1,7 @@
 package com.bcopstein.sistvendas.interfaceAdaptadora.entidades;
 
+import com.bcopstein.sistvendas.dominio.modelos.ProdutoModel;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,6 +12,7 @@ public class Produto{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     private String descricao;
     private double precoUnitario;
 
@@ -44,5 +47,17 @@ public class Produto{
             ", descricao='" + getDescricao() + "'" +
             ", precoUnitario='" + getPrecoUnitario() + "'" +
             "}";
+    }
+
+    public static ProdutoModel toModel(Produto produto) {
+        return new ProdutoModel(produto.getId(), produto.getDescricao(), produto.getPrecoUnitario());
+    }
+
+    public ProdutoModel toModel() {
+        return new ProdutoModel(this.getId(), this.getDescricao(), this.getPrecoUnitario());
+    }
+
+    public static Produto fromModel(ProdutoModel model) {
+        return new Produto(model.getId(), model.getDescricao(), model.getPrecoUnitario());
     }
 }

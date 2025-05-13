@@ -1,14 +1,22 @@
 package com.bcopstein.sistvendas.interfaceAdaptadora.entidades;
+import com.bcopstein.sistvendas.dominio.modelos.ItemDeEstoqueModel;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class ItemDeEstoque{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "produto_id")
     private Produto produto;
     private int quantidade;
     private int estoqueMin;
@@ -62,4 +70,12 @@ public class ItemDeEstoque{
                 + estoqueMin + ", estoqueMax=" + estoqueMax + "]";
     }
    
+    public ItemDeEstoqueModel toModel() {
+        return new ItemDeEstoqueModel(this.produto.toModel(), this.quantidade, this.estoqueMin, this.estoqueMax);
+    }
+
+    public static ItemDeEstoque fromModel(ItemDeEstoqueModel model) {
+        Produto produto = Produto.fromModel(model.getProduto());
+        return new ItemDeEstoque(0, produto, model.getQuantidade(), model.getEstoqueMin(), model.getEstoqueMax());
+    } 
 }

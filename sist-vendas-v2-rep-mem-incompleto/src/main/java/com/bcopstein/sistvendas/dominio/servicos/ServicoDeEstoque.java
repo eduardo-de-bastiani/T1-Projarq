@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.bcopstein.sistvendas.dominio.persistencia.IEstoqueRepositorio;
 import com.bcopstein.sistvendas.dominio.persistencia.IProdutoRepositorio;
-import com.bcopstein.sistvendas.aplicacao.dtos.ItemEstoqueDTO;
+import com.bcopstein.sistvendas.dominio.modelos.ItemDeEstoqueModel;
 import com.bcopstein.sistvendas.dominio.modelos.ItemPedidoModel;
 import com.bcopstein.sistvendas.dominio.modelos.ProdutoModel;
 
@@ -44,11 +44,11 @@ public class ServicoDeEstoque{
         }
     }
 
-    public List<ItemEstoqueDTO> estoqueCompleto() {
+    public List<ItemDeEstoqueModel> estoqueCompleto() {
         return this.estoque.estoqueCompleto();
     }
 
-    public List<ItemEstoqueDTO> estoquePorProdutos(List<Long> idsProdutos) {
+    public List<ItemDeEstoqueModel> estoquePorProdutos(List<Long> idsProdutos) {
         return this.estoque.estoquePorProdutos(idsProdutos);
     }
 }

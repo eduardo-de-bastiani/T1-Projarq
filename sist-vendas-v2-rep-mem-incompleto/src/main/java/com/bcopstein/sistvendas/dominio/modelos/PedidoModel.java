@@ -20,6 +20,13 @@ public class PedidoModel {
         this.data = data;
     }
 
+    public PedidoModel(long id, Localidade local, Date data, List<ItemPedidoModel> itens) {
+        this.id = id;
+        this.itens = itens;
+        this.local = local;
+        this.data = data;
+    }
+
     public long getId() {
         return id;
     }

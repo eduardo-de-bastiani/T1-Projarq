@@ -15,6 +15,13 @@ public class ItemDeEstoqueModel{
         this.estoqueMax = estoqueMax;
     }
 
+    public ItemDeEstoqueModel(ProdutoModel produto, int quantidade, int estoqueMin, int estoqueMax) {
+        this.produto = produto;
+        this.quantidade = quantidade;
+        this.estoqueMin = estoqueMin;
+        this.estoqueMax = estoqueMax;
+    }
+
     public long getId() {
         return id;
     }
@@ -52,5 +59,4 @@ public class ItemDeEstoqueModel{
         return "ItemDeEstoque [id=" + id + ", produto=" + produto + ", quantidade=" + quantidade + ", estoqueMin="
                 + estoqueMin + ", estoqueMax=" + estoqueMax + "]";
     }
-   
 }
