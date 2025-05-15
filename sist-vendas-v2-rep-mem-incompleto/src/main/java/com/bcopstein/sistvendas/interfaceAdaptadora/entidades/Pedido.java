@@ -10,7 +10,9 @@ import com.bcopstein.sistvendas.dominio.modelos.ItemPedidoModel;
 import com.bcopstein.sistvendas.dominio.modelos.PedidoModel;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,6 +28,8 @@ public class Pedido {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "pedido_id")
     private List<ItemPedido> itens;
+    @Column(name = "local")
+    @Enumerated(jakarta.persistence.EnumType.ORDINAL)
     private Localidade local;
     private Date data;
 
