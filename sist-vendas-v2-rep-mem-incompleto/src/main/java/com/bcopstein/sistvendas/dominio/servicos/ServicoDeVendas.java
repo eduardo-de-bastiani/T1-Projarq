@@ -35,22 +35,27 @@ public class ServicoDeVendas {
 
     public OrcamentoModel criaOrcamento(PedidoModel pedido) {
         var novoOrcamento = new OrcamentoModel();
+
         novoOrcamento.setLocalidade(pedido.getLocal());
         novoOrcamento.setData(pedido.getData());
         novoOrcamento.addItensPedido(pedido);
+
         double custoItens = novoOrcamento.getItens().stream()
             .mapToDouble(it->it.getProduto().getPrecoUnitario()*it.getQuantidade())
             .sum();
+
+        novoOrcamento.setCustoItens(custoItens);
 
         // Aqui devemos calcular o imposto de acordo com a localidade -> Devemos chamar o Strategy
         double valorImposto = servicoDeImposto.calculaImposto(novoOrcamento, pedido.getLocal());
         novoOrcamento.setImposto(valorImposto);
 
         if (novoOrcamento.getItens().size() > 5){
-                novoOrcamento.setDesconto(custoItens * 0.05);
-            }else{
-                novoOrcamento.setDesconto(0.0);
-            }
+            novoOrcamento.setDesconto(custoItens * 0.05);
+        }else{
+            novoOrcamento.setDesconto(0.0);
+        }
+
         novoOrcamento.setCustoConsumidor(custoItens + novoOrcamento.getImposto() - novoOrcamento.getDesconto());
         return this.orcamentos.cadastra(novoOrcamento);
     }
@@ -62,9 +67,20 @@ public class ServicoDeVendas {
         
         // Verifica se tem quantidade em estoque para todos os itens
         List<ProdutoModel> produtosDisponiveis = produtosDisponiveis();
+
         for (ItemPedidoModel item : orcamento.getItens()) {
             ProdutoModel produto = item.getProduto();
-            if (!produtosDisponiveis.contains(produto) || this.estoque.quantidadeEmEstoque(produto.getId()) < item.getQuantidade()) {
+            long produtoId = produto.getId();
+
+            boolean produtoEncontrado = false;
+            for (ProdutoModel produtoDisponivel : produtosDisponiveis) {
+                if (produtoDisponivel.getId() == produtoId) {
+                    produtoEncontrado = true;
+                    break;
+                }
+            }
+            
+            if (this.estoque.quantidadeEmEstoque(produto.getId()) < item.getQuantidade() || !produtoEncontrado) {
                 return null; 
             }
         }
@@ -77,6 +93,7 @@ public class ServicoDeVendas {
 
         // Marca o orcamento como efetivado
         orcamento.efetiva();
+        this.orcamentos.marcaComoEfetivado(id);
 
         // Retorna o orçamento marcado como efetivado ou não conforme disponibilidade do estoque
         return orcamento;

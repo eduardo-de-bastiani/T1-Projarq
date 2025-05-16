@@ -8,5 +8,4 @@ import com.bcopstein.sistvendas.interfaceAdaptadora.entidades.Produto;
 
 public interface ProdutoJPA_ItfRep extends CrudRepository<Produto, Long>{
     List<Produto> findAll();
-    Produto findById(long id);
 }

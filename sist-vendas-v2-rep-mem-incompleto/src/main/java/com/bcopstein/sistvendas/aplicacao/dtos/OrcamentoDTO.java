@@ -32,6 +32,8 @@ public class OrcamentoDTO {
         this.data = data;
     }
 
+    public OrcamentoDTO() { }
+
     public long getId() {
         return id;
     }

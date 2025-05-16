@@ -16,6 +16,8 @@ public class NovoOrcamentoDTO {
         this.data = data;
     }
 
+    public NovoOrcamentoDTO() { }
+
     public Date getData() {
         return data;
     }

@@ -13,6 +13,8 @@ public class ProdutoDTO{
         this.precoUnitario = precoUnitario;
     }
 
+    public ProdutoDTO() { }
+
     public long getId() {
         return this.id;
     }

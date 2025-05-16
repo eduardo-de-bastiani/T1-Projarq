@@ -13,6 +13,8 @@ public class ItemEstoqueDTO {
         this.quantidade = quantidade;
     }
 
+    public ItemEstoqueDTO() {}
+
     public int getQuantidade() {
         return quantidade;
     }

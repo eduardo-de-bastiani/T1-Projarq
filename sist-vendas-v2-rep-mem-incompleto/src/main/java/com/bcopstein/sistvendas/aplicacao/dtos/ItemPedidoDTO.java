@@ -4,25 +4,35 @@ import com.bcopstein.sistvendas.dominio.modelos.ItemPedidoModel;
 import com.bcopstein.sistvendas.dominio.modelos.ProdutoModel;
 
 public class ItemPedidoDTO {
-    private long idProduto;
-    private int qtdade;
+    private long produtoId;
+    private int quantidade;
 
-    public ItemPedidoDTO(long idProduto, int qtdade) {
-        this.idProduto = idProduto;
-        this.qtdade = qtdade;
+    public ItemPedidoDTO(long produtoId, int quantidade) {
+        this.produtoId = produtoId;
+        this.quantidade = quantidade;
     }
 
-    public long getIdProduto() {
-        return idProduto;
+    public ItemPedidoDTO() { }
+
+    public long getProdutoId() {
+        return produtoId;
     }
 
-    public int getQtdade() {
-        return qtdade;
+    public void setProdutoId(long produtoId) {
+        this.produtoId = produtoId;
+    }
+
+    public int getQuantidade() {
+        return quantidade;
+    }
+
+    public void setQuantidade(int quantidade) {
+        this.quantidade = quantidade;
     }
 
     @Override
     public String toString() {
-        return "ItemPedidoDTO [idProduto=" + idProduto + ", qtdade=" + qtdade + "]";
+        return "ItemPedidoDTO [idProduto=" + produtoId + ", qtdade=" + quantidade + "]";
     }    
 
     public static ItemPedidoDTO fromModel(ItemPedidoModel item){
@@ -30,6 +40,6 @@ public class ItemPedidoDTO {
     }
 
     public ItemPedidoModel toModel(ProdutoModel produto) {
-        return new ItemPedidoModel(produto, this.qtdade);
+        return new ItemPedidoModel(produto, this.quantidade);
     }
 }

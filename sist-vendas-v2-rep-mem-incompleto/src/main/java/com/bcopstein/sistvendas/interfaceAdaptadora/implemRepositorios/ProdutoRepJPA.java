@@ -3,6 +3,7 @@ package com.bcopstein.sistvendas.interfaceAdaptadora.implemRepositorios;
 import java.util.LinkedList;
 import java.util.List;
 
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
@@ -34,12 +35,7 @@ public class ProdutoRepJPA implements IProdutoRepositorio {
     }
 
     public ProdutoModel consultaPorId(long id) {
-        Produto produto = produtoRepository.findById(id);
-        System.out.println("Produto de codigo: "+id+": "+produto);
-        if (produto == null) {
-            return null;
-        } else {
-            return Produto.toModel(produto);
-        }
+        Optional<Produto> optProduto = produtoRepository.findById(id);
+        return optProduto.map(prod -> prod.toModel()).orElse(null);
     }
 }

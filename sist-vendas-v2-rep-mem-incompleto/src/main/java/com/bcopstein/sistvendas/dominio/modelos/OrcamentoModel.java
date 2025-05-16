@@ -102,4 +102,12 @@ public class OrcamentoModel {
     public void setData(Date data) {
         this.data = data;
     }
+
+    @Override
+    public String toString() {
+        return "OrcamentoModel [id=" + id + ", itens=" + itens + ", custoItens=" + custoItens + ", imposto=" + imposto
+                + ", desconto=" + desconto + ", custoConsumidor=" + custoConsumidor + ", efetivado=" + efetivado
+                + ", localidade=" + localidade + ", data=" + data + "]";
+    }
+
 }

@@ -11,6 +11,8 @@ import com.bcopstein.sistvendas.dominio.modelos.PedidoModel;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,11 +28,12 @@ public class Pedido {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "pedido_id")
     private List<ItemPedido> itens;
+    
+    @Enumerated(EnumType.STRING)
     private Localidade local;
     private Date data;
 
-    public Pedido(long id, Localidade local, Date data) {
-        this.id = id;
+    public Pedido(Localidade local, Date data) {
         this.itens = new LinkedList<>();
         this.local = local;
         this.data = data;
@@ -75,7 +78,7 @@ public class Pedido {
     }
 
     public static Pedido fromModel(PedidoModel model) {
-        Pedido pedido = new Pedido(model.getId(), model.getLocal(), model.getData());
+        Pedido pedido = new Pedido(model.getLocal(), model.getData());
         for (ItemPedidoModel itemModel : model.getItens()) {
             pedido.addItem(ItemPedido.fromModel(itemModel));
         }

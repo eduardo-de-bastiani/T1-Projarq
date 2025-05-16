@@ -10,7 +10,5 @@ import com.bcopstein.sistvendas.interfaceAdaptadora.entidades.Orcamento;
 public interface OrcamentoJPA_ItfRep extends CrudRepository<Orcamento,Long> {
     List<Orcamento> findAll();
 
-    Orcamento findById(long id);
-
     List<Orcamento> findByEfetivadoTrueAndDataBetween(Date dataInicial, Date dataFinal);
 }

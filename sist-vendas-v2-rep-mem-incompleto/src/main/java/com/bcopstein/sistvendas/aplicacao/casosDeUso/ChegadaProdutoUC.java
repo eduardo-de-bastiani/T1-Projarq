@@ -22,7 +22,7 @@ public class ChegadaProdutoUC {
     public void run(List<ItemPedidoDTO> produtos) {
         List<ItemPedidoModel> produtosModel = produtos.stream()
             .map(dto -> {
-                ProdutoModel produto = servicoEstoque.produtoPorCodigo(dto.getIdProduto());
+                ProdutoModel produto = servicoEstoque.produtoPorCodigo(dto.getProdutoId());
                 return dto.toModel(produto);
             })
             .toList();

@@ -8,27 +8,20 @@ import java.util.List;
 import com.bcopstein.sistvendas.auxiliares.Localidade;
 
 public class PedidoModel {
-    private long id;
     private List<ItemPedidoModel> itens;
     private Localidade local;
     private Date data;
 
-    public PedidoModel(long id, Localidade local, Date data) {
-        this.id = id;
+    public PedidoModel(Localidade local, Date data) {
         this.itens = new LinkedList<>();
         this.local = local;
         this.data = data;
     }
 
     public PedidoModel(long id, Localidade local, Date data, List<ItemPedidoModel> itens) {
-        this.id = id;
         this.itens = itens;
         this.local = local;
         this.data = data;
-    }
-
-    public long getId() {
-        return id;
     }
 
     public Localidade getLocal() {
@@ -53,5 +46,10 @@ public class PedidoModel {
 
     public void addItem(ItemPedidoModel item){
         itens.add(item);
+    }
+
+    @Override
+    public String toString() {
+        return "PedidoModel [itens=" + itens + ", local=" + local + ", data=" + data + "]";
     }
 }

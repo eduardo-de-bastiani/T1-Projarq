@@ -11,6 +11,8 @@ import com.bcopstein.sistvendas.dominio.modelos.OrcamentoModel;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,6 +33,8 @@ public class Orcamento {
     private double desconto;
     private double custoConsumidor; 
     private boolean efetivado;
+    
+    @Enumerated(EnumType.STRING)
     private Localidade localidade;
     private Date data;
 

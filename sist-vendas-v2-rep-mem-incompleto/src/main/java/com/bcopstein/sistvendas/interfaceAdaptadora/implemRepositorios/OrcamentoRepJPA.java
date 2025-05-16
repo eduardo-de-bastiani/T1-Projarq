@@ -1,6 +1,7 @@
 package com.bcopstein.sistvendas.interfaceAdaptadora.implemRepositorios;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,33 +33,38 @@ public class OrcamentoRepJPA implements IOrcamentoRepositorio {
 
     @Override
     public OrcamentoModel cadastra(OrcamentoModel orcamento) {
-        Orcamento orcamentoEntidade = new Orcamento();
-        orcamentoRepository.save(orcamentoEntidade);
-        return orcamentoEntidade.toModel();
+        Orcamento entidade = Orcamento.fromModel(orcamento);
+        Orcamento salvo = orcamentoRepository.save(entidade);
+        return salvo.toModel();
     }
 
     @Override
     public OrcamentoModel recuperaPorId(long id) {
-        Orcamento orcamento = orcamentoRepository.findById(id);
-        return orcamento.toModel();
+        Orcamento orcamento = orcamentoRepository.findById(id).orElse(null);
+        return orcamento != null ? orcamento.toModel() : null;
     }
 
     @Override
     public void marcaComoEfetivado(long id) {
-        Orcamento orcamento = orcamentoRepository.findById(id);
-        orcamento.efetiva();
-        orcamentoRepository.save(orcamento);
+        Orcamento orcamento = orcamentoRepository.findById(id).orElse(null);
+        if (orcamento != null) {
+            orcamento.efetiva();
+            orcamentoRepository.save(orcamento);
+        }
     }
 
     @Override
     public List<OrcamentoModel> recuperaData(String dataInicial, String dataFinal) {
-        Date dataI = Date.valueOf(dataInicial);
-        Date dataF = Date.valueOf(dataFinal);
+        LocalDate dataI = LocalDate.parse(dataInicial);
+        LocalDate dataF = LocalDate.parse(dataFinal).plusDays(1); 
 
-        List<Orcamento> orcamentos = orcamentoRepository.findByEfetivadoTrueAndDataBetween(dataI, dataF);
+        List<Orcamento> orcamentos = orcamentoRepository.findByEfetivadoTrueAndDataBetween(
+            Date.valueOf(dataI),
+            Date.valueOf(dataF)
+        );
+
         return orcamentos.stream()
-                .map(orcamento -> orcamento.toModel())
-                .toList();
+            .map(orcamento -> orcamento.toModel())
+            .toList();
     }
-    
 }
