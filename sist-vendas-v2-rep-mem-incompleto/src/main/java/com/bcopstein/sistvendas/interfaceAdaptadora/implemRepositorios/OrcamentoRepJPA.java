@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
+import com.bcopstein.sistvendas.auxiliares.DefaultException;
 import com.bcopstein.sistvendas.dominio.modelos.OrcamentoModel;
 import com.bcopstein.sistvendas.dominio.persistencia.IOrcamentoRepositorio;
 import com.bcopstein.sistvendas.interfaceAdaptadora.entidades.Orcamento;
@@ -41,16 +42,24 @@ public class OrcamentoRepJPA implements IOrcamentoRepositorio {
     @Override
     public OrcamentoModel recuperaPorId(long id) {
         Orcamento orcamento = orcamentoRepository.findById(id).orElse(null);
-        return orcamento != null ? orcamento.toModel() : null;
+
+        if (orcamento == null) {
+            throw new DefaultException("Orçamento inexistente");
+        }
+
+        return orcamento.toModel();
     }
 
     @Override
     public void marcaComoEfetivado(long id) {
         Orcamento orcamento = orcamentoRepository.findById(id).orElse(null);
-        if (orcamento != null) {
-            orcamento.efetiva();
-            orcamentoRepository.save(orcamento);
+
+        if (orcamento == null) {
+            throw new DefaultException("Orçamento inexistente");
         }
+
+        orcamento.efetiva();
+        orcamentoRepository.save(orcamento);
     }
 
     @Override

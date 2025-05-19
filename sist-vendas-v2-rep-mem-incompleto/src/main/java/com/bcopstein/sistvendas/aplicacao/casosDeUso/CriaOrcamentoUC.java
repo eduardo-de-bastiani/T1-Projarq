@@ -34,7 +34,11 @@ public class CriaOrcamentoUC {
             ItemPedidoModel itemPedido = new ItemPedidoModel(produto, item.getQuantidade());
             pedido.addItem(itemPedido);
         }
+        
+        servicoDeVendas.criaPedido(pedido);
         OrcamentoModel orcamento = servicoDeVendas.criaOrcamento(pedido);
+        // servicoDeVendas.relacionaItensOrcamento(orcamento, pedido);
+
         return OrcamentoDTO.fromModel(orcamento);
     }
 }

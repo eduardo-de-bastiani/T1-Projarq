@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
+import com.bcopstein.sistvendas.auxiliares.DefaultException;
 import com.bcopstein.sistvendas.dominio.modelos.ItemDeEstoqueModel;
 import com.bcopstein.sistvendas.dominio.modelos.ProdutoModel;
 import com.bcopstein.sistvendas.dominio.persistencia.IEstoqueRepositorio;
@@ -26,6 +27,7 @@ public class EstoqueRepJPA implements IEstoqueRepositorio{
     @Override
     public List<ProdutoModel> todosComEstoque() {
         List<ItemDeEstoque> itens = estoque.findByQuantidadeGreaterThan(0);
+
         return itens.stream()
                 .map(it -> it.getProduto().toModel())
                 .toList();
@@ -42,22 +44,28 @@ public class EstoqueRepJPA implements IEstoqueRepositorio{
     @Override
     public int quantidadeEmEstoque(long codigo) {
         ItemDeEstoque item = estoque.findById(codigo).orElse(null);
+        
         if (item == null){
-            return -1;
-        }else{
-            return item.getQuantidade();
+            throw new DefaultException("Produto inexistente");
         }
+
+        return item.getQuantidade();
     }
 
     @Override
     public void baixaEstoque(long codProd, int qtdade) {
         ItemDeEstoque item = estoque.findById(codProd).orElse(null);
+
         if (item == null){
-            throw new IllegalArgumentException("Produto inexistente");
+            throw new DefaultException("Produto inexistente");
         }
         if (item.getQuantidade() < qtdade){
-            throw new IllegalArgumentException("Quantidade em estoque insuficiente");
+            throw new DefaultException("Quantidade em estoque insuficiente");
         }
+        if (item.getEstoqueMin() > item.getQuantidade() - qtdade ) {
+            throw new DefaultException("Quantidade em estoque ficará abaixo do mínimo");
+        }
+
         int novaQuantidade = item.getQuantidade() - qtdade;
         item.setQuantidade(novaQuantidade);
         estoque.save(item);
@@ -66,9 +74,14 @@ public class EstoqueRepJPA implements IEstoqueRepositorio{
     @Override
     public void adicionaEstoque(long id, int qtdade) {
         ItemDeEstoque item = estoque.findById(id).orElse(null);
+
         if (item == null){
-            throw new IllegalArgumentException("Produto inexistente");
+            throw new DefaultException("Produto inexistente");
         }
+        if (item.getEstoqueMax() < item.getQuantidade() + qtdade) {
+            throw new DefaultException("Quantidade em estoque excederá o máximo");
+        }
+
         int novaQuantidade = item.getQuantidade() + qtdade;
         item.setQuantidade(novaQuantidade);
         estoque.save(item);
@@ -87,12 +100,12 @@ public class EstoqueRepJPA implements IEstoqueRepositorio{
         List<ItemDeEstoque> itens = estoque.findByProdutoIdIn(idsProdutos);
 
         if (itens.isEmpty()) {
-            throw new IllegalArgumentException("Nenhum produto encontrado");
+            throw new DefaultException("Nenhum produto encontrado");
         }
 
         for (ItemDeEstoque item : itens) {
             if (item.getProduto() == null) {
-                throw new IllegalArgumentException("Produto inexistente");
+                throw new DefaultException("Produto inexistente");
             }
         }
         

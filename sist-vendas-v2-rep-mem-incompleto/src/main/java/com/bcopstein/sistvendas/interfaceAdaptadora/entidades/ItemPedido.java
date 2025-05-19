@@ -17,15 +17,18 @@ public class ItemPedido {
     private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "orcamento_id")
+    private Orcamento orcamento;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "produto_id")
     private Produto produto;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pedido_id")
+    private Pedido pedido;
+
     private int quantidade;
-    
-    public ItemPedido(long id, Produto produto, int quantidade) {
-        this.id = id;
-        this.produto = produto;
-        this.quantidade = quantidade;
-    }
 
     public ItemPedido(Produto produto, int quantidade) {
         this.produto = produto;
@@ -46,6 +49,26 @@ public class ItemPedido {
         this.quantidade = quantidade;
     }
 
+    public void setProduto(Produto produto) {
+        this.produto = produto;
+    }
+
+    public Orcamento getOrcamento() {
+        return orcamento;
+    }
+
+    public void setOrcamento(Orcamento orcamento) {
+        this.orcamento = orcamento;
+    }
+
+    public Pedido getPedido() {
+        return pedido;
+    }
+
+    public void setPedido(Pedido pedido) {
+        this.pedido = pedido;
+    }
+
     @Override
     public String toString() {
         return "ItemPedido [produto=" + produto + ", quantidade=" + quantidade + "]";
@@ -61,6 +84,16 @@ public class ItemPedido {
 
     public static ItemPedido fromModel(ItemPedidoModel model) {
         Produto produto = Produto.fromModel(model.getProduto());
-        return new ItemPedido(produto, model.getQuantidade());
+        ItemPedido ip = new ItemPedido(produto, model.getQuantidade());
+
+        if (model.getOrcamento() != null) {
+            ip.setOrcamento(Orcamento.fromModel(model.getOrcamento()));
+        }
+
+        if (model.getPedido() != null) {
+            ip.setPedido(Pedido.fromModel(model.getPedido()));
+        }
+
+        return ip;
     }
 }
