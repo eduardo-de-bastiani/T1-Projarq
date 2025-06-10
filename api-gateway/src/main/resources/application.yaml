@@ -1,0 +1,67 @@
+server:
+  port: 8765
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          lower-case-service-id: true
+      routes:
+        - id: produtos-disponiveis
+          uri: lb://sistema-vendas
+          predicates:
+            - Path=/produtosDisponiveis
+          filters:
+            - RewritePath=/produtosDisponiveis, /produtosDisponiveis
+        - id: novo-orcamento
+          uri: lb://sistema-vendas
+          predicates:
+            - Path=/novoOrcamento
+          filters:
+            - RewritePath=/novoOrcamento, /novoOrcamento
+        - id: efetiva-orcamento
+          uri: lb://sistema-vendas
+          predicates:
+            - Path=/efetivaOrcamento/(?<id>.*)
+          filters:
+            - RewritePath=/efetivaOrcamento/(?<id>.*), /efetivaOrcamento/${id}
+        - id: chegada-produto
+          uri: lb://sistema-vendas
+          predicates:
+            - Path=/chegadaProduto
+          filters:
+            - RewritePath=/chegadaProduto, /chegadaProduto
+        - id: estoque-completo
+          uri: lb://sistema-vendas
+          predicates:
+            - Path=/estoqueCompleto
+          filters:
+            - RewritePath=/estoqueCompleto, /estoqueCompleto
+        - id: estoque-por-produtos
+          uri: lb://sistema-vendas
+          predicates:
+            - Path=/estoquePorProdutos
+          filters:
+            - RewritePath=/estoquePorProdutos, /estoquePorProdutos
+        - id: orcamentos-efetivados
+          uri: lb://sistema-vendas
+          predicates:
+            - Path=/orcamentosEfetivados
+          filters:
+            - RewritePath=/orcamentosEfetivados, /orcamentosEfetivados
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true
