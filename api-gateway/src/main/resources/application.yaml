@@ -10,43 +10,43 @@ spring:
           lower-case-service-id: true
       routes:
         - id: produtos-disponiveis
-          uri: lb://sistema-vendas
+          uri: lb://sist-vendas
           predicates:
             - Path=/produtos
           filters:
             - RewritePath=/produtos, /produtosDisponiveis
         - id: novo-orcamento
-          uri: lb://sistema-vendas
+          uri: lb://sist-vendas
           predicates:
             - Path=/orcamento/novo
           filters:
             - RewritePath=/orcamento/novo, /novoOrcamento
         - id: efetiva-orcamento
-          uri: lb://sistema-vendas
+          uri: lb://sist-vendas
           predicates:
             - Path=/orcamento/efetivar/(?<id>.*)
           filters:
             - RewritePath=/orcamento/efetivar/(?<id>.*), /efetivaOrcamento/${id}
         - id: chegada-produto
-          uri: lb://sistema-vendas
+          uri: lb://sist-vendas
           predicates:
             - Path=/estoque/chegada
           filters:
             - RewritePath=/estoque/chegada, /chegadaProduto
         - id: estoque-completo
-          uri: lb://sistema-vendas
+          uri: lb://sist-vendas
           predicates:
             - Path=/estoque/completo
           filters:
             - RewritePath=/estoque/completo, /estoqueCompleto
         - id: estoque-por-produtos
-          uri: lb://sistema-vendas
+          uri: lb://sist-vendas
           predicates:
             - Path=/estoque/por-produtos
           filters:
             - RewritePath=/estoque/por-produtos, /estoquePorProdutos
         - id: orcamentos-efetivados
-          uri: lb://sistema-vendas
+          uri: lb://sist-vendas
           predicates:
             - Path=/orcamento/efetivados
           filters:
