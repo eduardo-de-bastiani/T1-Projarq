@@ -1,132 +1,123 @@
 package com.bcopstein.sistvendas.dominio.servicos;
 
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import com.bcopstein.sistvendas.auxiliares.DefaultException;
 import com.bcopstein.sistvendas.dominio.modelos.ItemPedidoModel;
 import com.bcopstein.sistvendas.dominio.modelos.OrcamentoModel;
-import com.bcopstein.sistvendas.dominio.modelos.PedidoModel;
 import com.bcopstein.sistvendas.dominio.modelos.ProdutoModel;
 import com.bcopstein.sistvendas.dominio.persistencia.IEstoqueRepositorio;
-import com.bcopstein.sistvendas.dominio.persistencia.IItemPedidoRepositorio;
 import com.bcopstein.sistvendas.dominio.persistencia.IOrcamentoRepositorio;
-import com.bcopstein.sistvendas.dominio.persistencia.IPedidoRepositorio;
 
 @Service
 public class ServicoDeVendas {
+    
+    @Value("${microservico.registro.url:http://microservico-registro:8082}")
+    private String microservicoRegistroUrl;
+    
     private IOrcamentoRepositorio orcamentos;
-    private IPedidoRepositorio pedidos;
-    private IItemPedidoRepositorio itemPedido;
     private IEstoqueRepositorio estoque;
     private ServicoDeImposto servicoDeImposto;
+    private final RestTemplate restTemplate;
 
     @Autowired
-    public ServicoDeVendas(IOrcamentoRepositorio orcamentos,IEstoqueRepositorio estoque, ServicoDeImposto servicoDeImposto, IPedidoRepositorio pedidos, IItemPedidoRepositorio itemPedido) {
-        this.pedidos = pedidos;
-        this.itemPedido = itemPedido;
+    public ServicoDeVendas(IOrcamentoRepositorio orcamentos,
+                                   IEstoqueRepositorio estoque,
+                                   ServicoDeImposto servicoDeImposto) {
         this.orcamentos = orcamentos;
         this.estoque = estoque;
         this.servicoDeImposto = servicoDeImposto;
-    }
-    
-    public List<ProdutoModel> produtosDisponiveis() {
-        return estoque.todosComEstoque();
+        this.restTemplate = new RestTemplate();
     }
 
-    public OrcamentoModel recuperaOrcamentoPorId(long id) {
-        return this.orcamentos.recuperaPorId(id);
-    }
+    public OrcamentoModel criaOrcamento(List<ItemPedidoModel> itens, String localidade) {
+        // Calcula o subtotal
+        double subtotal = itens.stream().mapToDouble(item -> item.getPrecoUnitario() * item.getQuantidade()).sum();
 
-    public OrcamentoModel criaOrcamento(PedidoModel pedido) {
-        var novoOrcamento = new OrcamentoModel();
+        // Calcula o imposto usando o microserviço
+        OrcamentoModel orcamentoTemp = new OrcamentoModel(0L, subtotal, 0.0, 0.0, itens);
+        double imposto = servicoDeImposto.calculaImposto(orcamentoTemp, localidade);
 
-        novoOrcamento.setLocalidade(pedido.getLocal());
-        novoOrcamento.setData(pedido.getData());
-        novoOrcamento.addItensPedido(pedido);
+        // Calcula o total
+        double total = subtotal + imposto;
 
-        double custoItens = novoOrcamento.getItens().stream()
-            .mapToDouble(it->it.getProduto().getPrecoUnitario()*it.getQuantidade())
-            .sum();
+        // Cria o orçamento
+        OrcamentoModel orcamento = new OrcamentoModel(0L, subtotal, imposto, total, itens);
 
-        novoOrcamento.setCustoItens(custoItens);
+        // Persiste o orçamento
+        orcamentos.save(orcamento);
 
-        // Aqui devemos calcular o imposto de acordo com a localidade -> Devemos chamar o Strategy
-        double valorImposto = servicoDeImposto.calculaImposto(novoOrcamento, pedido.getLocal());
-        novoOrcamento.setImposto(valorImposto);
-
-        if (novoOrcamento.getItens().size() > 5){
-            novoOrcamento.setDesconto(custoItens * 0.05);
-        }else{
-            novoOrcamento.setDesconto(0.0);
-        }
-
-        novoOrcamento.setCustoConsumidor(custoItens + novoOrcamento.getImposto() - novoOrcamento.getDesconto());
-        return this.orcamentos.cadastra(novoOrcamento);
-    }
- 
-    public OrcamentoModel efetivaOrcamento(long id) {
-        // Recupera o orçamento
-        OrcamentoModel orcamento = this.orcamentos.recuperaPorId(id);
-        if (orcamento == null || orcamento.isEfetivado()) throw new DefaultException("Orçamento não encontrado ou já efetivado");
-        
-        // Verifica se tem quantidade em estoque para todos os itens
-        List<ProdutoModel> produtosDisponiveis = produtosDisponiveis();
-
-        for (ItemPedidoModel item : orcamento.getItens()) {
-            ProdutoModel produto = item.getProduto();
-            long produtoId = produto.getId();
-
-            boolean produtoEncontrado = false;
-            for (ProdutoModel produtoDisponivel : produtosDisponiveis) {
-                if (produtoDisponivel.getId() == produtoId) {
-                    produtoEncontrado = true;
-                    break;
-                }
-            }
-
-            if (!produtoEncontrado) {
-                throw new DefaultException("Produto não encontrado no estoque: " + produto.getDescricao());
-            }
-            
-            if (this.estoque.quantidadeEmEstoque(produto.getId()) < item.getQuantidade()) {
-                throw new DefaultException("Quantidade insuficiente em estoque para o produto: " + produto.getDescricao()); 
-            }
-            
-            if (item.getQuantidade() <= 0) {
-                throw new DefaultException("Quantidade inválida para o produto: " + produto.getDescricao());
-            }
-        }
-
-        // Se tem quantidade para todos os itens, da baixa no estoque para todos
-        for (ItemPedidoModel item : orcamento.getItens()) {
-            ProdutoModel produto = item.getProduto();
-            this.estoque.baixaEstoque(produto.getId(), item.getQuantidade());
-        }
-
-        // Marca o orcamento como efetivado
-        orcamento.efetiva();
-        this.orcamentos.marcaComoEfetivado(id);
-
-        // Retorna o orçamento marcado como efetivado ou não conforme disponibilidade do estoque
         return orcamento;
     }
 
-    public List<OrcamentoModel> orcamentosDatas(String dataInicial, String dataFinal) {
-        return this.orcamentos.recuperaData(dataInicial, dataFinal);
+    public OrcamentoModel efetivaOrcamento(Long idOrcamento, String localidade) {
+        OrcamentoModel orcamento = orcamentos.findById(idOrcamento).orElse(null);
+
+        if (orcamento == null) {
+            throw new DefaultException("Orcamento nao encontrado: " + idOrcamento);
+        }
+
+        // Verifica se há estoque para todos os produtos do orçamento
+        for (ItemPedidoModel item : orcamento.getItens()) {
+            ProdutoModel produto = estoque.findByCodigo(item.getCodigoProduto()).orElse(null);
+            if (produto == null || produto.getQuantidade() < item.getQuantidade()) {
+                throw new DefaultException("Estoque insuficiente para o produto: " + item.getCodigoProduto());
+            }
+        }
+
+        // Baixa o estoque dos produtos
+        for (ItemPedidoModel item : orcamento.getItens()) {
+            ProdutoModel produto = estoque.findByCodigo(item.getCodigoProduto()).get();
+            produto.setQuantidade(produto.getQuantidade() - item.getQuantidade());
+            estoque.save(produto);
+        }
+
+        // Registra o imposto no microserviço de registro
+        registrarImpostoNoMicroservico(orcamento, localidade);
+
+        return orcamento;
     }
 
-    public void criaPedido(PedidoModel pedido) {
-        this.pedidos.cadastraPedido(pedido);
-    }
-
-    public void relacionaItensOrcamento(OrcamentoModel orcamento, PedidoModel pedido) {
-        for (ItemPedidoModel item : pedido.getItens()) {
-            item.setOrcamento(orcamento);
-            item.setPedido(pedido);
-            this.itemPedido.cadastraItemPedido(item);
+    private void registrarImpostoNoMicroservico(OrcamentoModel orcamento, String localidade) {
+        try {
+            String url = microservicoRegistroUrl + "/api/registro/impostos";
+            
+            // Preparar o request
+            Map<String, Object> request = new HashMap<>();
+            request.put("orcamentoId", orcamento.getId());
+            request.put("valorVendido", orcamento.getSubtotal());
+            request.put("valorImposto", orcamento.getImposto());
+            request.put("localidade", localidade);
+            request.put("dataEfetivacao", LocalDateTime.now().toString());
+            request.put("detalhesImposto", "Imposto calculado para localidade: " + localidade);
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(request, headers);
+            
+            // Fazer a chamada para o microserviço
+            ResponseEntity<Map> response = restTemplate.postForEntity(url, entity, Map.class);
+            
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                System.err.println("Erro ao registrar imposto no microserviço: " + response.getStatusCode());
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Erro ao chamar microserviço de registro: " + e.getMessage());
+            // Não falha a operação principal se o registro falhar
         }
     }
 }
+

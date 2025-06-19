@@ -75,10 +75,10 @@ public class Controller {
     }
 
     // · Efetivar orçamento indicado se ainda for válido e houver produtos disponíveis
-    @GetMapping("efetivaOrcamento/{id}")
+    @GetMapping("efetivaOrcamento/{id}/{usuario}")
     @CrossOrigin(origins = "*")
-    public OrcamentoDTO efetivaOrcamento(@PathVariable(value="id") long idOrcamento){
-        return efetivaOrcamento.run(idOrcamento);
+    public OrcamentoDTO efetivaOrcamento(@PathVariable(value="id") long idOrcamento, @PathVariable(value="usuario") String usuario){
+        return efetivaOrcamento.run(idOrcamento, usuario);
     }
 
     // · Informar a chegada de produtos no estoque

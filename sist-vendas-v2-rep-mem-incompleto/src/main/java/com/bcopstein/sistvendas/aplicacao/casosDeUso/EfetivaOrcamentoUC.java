@@ -10,18 +10,19 @@ import com.bcopstein.sistvendas.dominio.servicos.ServicoDeVendas;
 @Component
 public class EfetivaOrcamentoUC {
     private ServicoDeVendas servicoDeVendas;
-    
+
     @Autowired
-    public EfetivaOrcamentoUC(ServicoDeVendas servicoDeVendas){
+    public EfetivaOrcamentoUC(ServicoDeVendas servicoDeVendas) {
         this.servicoDeVendas = servicoDeVendas;
     }
 
-    public OrcamentoDTO run(long idOrcamento){
+    public OrcamentoDTO run(long idOrcamento, String localidade) {
         System.out.println("idOrcamento = " + idOrcamento);
-        OrcamentoModel orcamentoEfetivado = servicoDeVendas.efetivaOrcamento(idOrcamento);
+        OrcamentoModel orcamentoEfetivado = servicoDeVendas.efetivaOrcamento(idOrcamento, localidade);
         if (orcamentoEfetivado == null) {
             throw new IllegalArgumentException("Houve um erro ao efetivar o orçamento.");
         }
         return OrcamentoDTO.fromModel(orcamentoEfetivado);
     }
 }
+
