@@ -12,45 +12,45 @@ spring:
         - id: produtos-disponiveis
           uri: lb://sistema-vendas
           predicates:
-            - Path=/produtosDisponiveis
+            - Path=/produtos
           filters:
-            - RewritePath=/produtosDisponiveis, /produtosDisponiveis
+            - RewritePath=/produtos, /produtosDisponiveis
         - id: novo-orcamento
           uri: lb://sistema-vendas
           predicates:
-            - Path=/novoOrcamento
+            - Path=/orcamento/novo
           filters:
-            - RewritePath=/novoOrcamento, /novoOrcamento
+            - RewritePath=/orcamento/novo, /novoOrcamento
         - id: efetiva-orcamento
           uri: lb://sistema-vendas
           predicates:
-            - Path=/efetivaOrcamento/(?<id>.*)
+            - Path=/orcamento/efetivar/(?<id>.*)
           filters:
-            - RewritePath=/efetivaOrcamento/(?<id>.*), /efetivaOrcamento/${id}
+            - RewritePath=/orcamento/efetivar/(?<id>.*), /efetivaOrcamento/${id}
         - id: chegada-produto
           uri: lb://sistema-vendas
           predicates:
-            - Path=/chegadaProduto
+            - Path=/estoque/chegada
           filters:
-            - RewritePath=/chegadaProduto, /chegadaProduto
+            - RewritePath=/estoque/chegada, /chegadaProduto
         - id: estoque-completo
           uri: lb://sistema-vendas
           predicates:
-            - Path=/estoqueCompleto
+            - Path=/estoque/completo
           filters:
-            - RewritePath=/estoqueCompleto, /estoqueCompleto
+            - RewritePath=/estoque/completo, /estoqueCompleto
         - id: estoque-por-produtos
           uri: lb://sistema-vendas
           predicates:
-            - Path=/estoquePorProdutos
+            - Path=/estoque/por-produtos
           filters:
-            - RewritePath=/estoquePorProdutos, /estoquePorProdutos
+            - RewritePath=/estoque/por-produtos, /estoquePorProdutos
         - id: orcamentos-efetivados
           uri: lb://sistema-vendas
           predicates:
-            - Path=/orcamentosEfetivados
+            - Path=/orcamento/efetivados
           filters:
-            - RewritePath=/orcamentosEfetivados, /orcamentosEfetivados
+            - RewritePath=/orcamento/efetivados, /orcamentosEfetivados
 eureka:
   client:
     serviceUrl:
