@@ -1,6 +1,7 @@
 package com.bcopstein.sistvendas.interfaceAdaptadora.implemRepositorios;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -11,6 +12,7 @@ import com.bcopstein.sistvendas.dominio.modelos.ItemDeEstoqueModel;
 import com.bcopstein.sistvendas.dominio.modelos.ProdutoModel;
 import com.bcopstein.sistvendas.dominio.persistencia.IEstoqueRepositorio;
 import com.bcopstein.sistvendas.interfaceAdaptadora.entidades.ItemDeEstoque;
+import com.bcopstein.sistvendas.interfaceAdaptadora.entidades.Produto;
 import com.bcopstein.sistvendas.interfaceAdaptadora.interfaceJPA.EstoqueJPA_ItfRep;
 
 
@@ -113,4 +115,25 @@ public class EstoqueRepJPA implements IEstoqueRepositorio{
                 .map(it -> new ItemDeEstoqueModel(it.getProduto().toModel(), it.getQuantidade(), it.getEstoqueMin(), it.getEstoqueMax()))
                 .toList();
     }
+
+    @Override
+    public Optional<ProdutoModel> findByCodigo(long codigo) {
+        return estoque.findById(codigo)
+                      .map(itemEstoque -> itemEstoque.getProduto().toModel());
+    }
+
+    @Override
+    public ProdutoModel save(ProdutoModel produtoModel) {
+        ItemDeEstoque itemEstoque = estoque.findById(produtoModel.getId())
+                                          .orElseThrow(() -> new DefaultException("Produto não encontrado no estoque para salvar: " + produtoModel.getId()));
+        
+        Produto produtoEntity = itemEstoque.getProduto();
+        produtoEntity.setDescricao(produtoModel.getDescricao());
+        produtoEntity.setPrecoUnitario(produtoModel.getPrecoUnitario());
+        
+        estoque.save(itemEstoque);
+        return produtoModel;
+    }
 }
+
+

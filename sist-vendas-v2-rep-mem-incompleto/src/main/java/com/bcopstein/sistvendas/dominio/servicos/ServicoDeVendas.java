@@ -57,13 +57,13 @@ public class ServicoDeVendas {
         OrcamentoModel orcamento = new OrcamentoModel(0L, subtotal, imposto, total, itens);
 
         // Persiste o orçamento
-        orcamentos.save(orcamento);
+        orcamentos.cadastra(orcamento);
 
         return orcamento;
     }
 
     public OrcamentoModel efetivaOrcamento(Long idOrcamento, String localidade) {
-        OrcamentoModel orcamento = orcamentos.findById(idOrcamento).orElse(null);
+        OrcamentoModel orcamento = orcamentos.recuperaPorId(idOrcamento);
 
         if (orcamento == null) {
             throw new DefaultException("Orcamento nao encontrado: " + idOrcamento);
@@ -71,17 +71,14 @@ public class ServicoDeVendas {
 
         // Verifica se há estoque para todos os produtos do orçamento
         for (ItemPedidoModel item : orcamento.getItens()) {
-            ProdutoModel produto = estoque.findByCodigo(item.getCodigoProduto()).orElse(null);
-            if (produto == null || produto.getQuantidade() < item.getQuantidade()) {
+            if (estoque.quantidadeEmEstoque(item.getCodigoProduto()) < item.getQuantidade()) {
                 throw new DefaultException("Estoque insuficiente para o produto: " + item.getCodigoProduto());
             }
         }
 
         // Baixa o estoque dos produtos
         for (ItemPedidoModel item : orcamento.getItens()) {
-            ProdutoModel produto = estoque.findByCodigo(item.getCodigoProduto()).get();
-            produto.setQuantidade(produto.getQuantidade() - item.getQuantidade());
-            estoque.save(produto);
+            estoque.baixaEstoque(item.getCodigoProduto(), item.getQuantidade());
         }
 
         // Registra o imposto no microserviço de registro
@@ -97,7 +94,7 @@ public class ServicoDeVendas {
             // Preparar o request
             Map<String, Object> request = new HashMap<>();
             request.put("orcamentoId", orcamento.getId());
-            request.put("valorVendido", orcamento.getSubtotal());
+            request.put("valorVendido", orcamento.getCustoItens()); // Alterado para getCustoItens()
             request.put("valorImposto", orcamento.getImposto());
             request.put("localidade", localidade);
             request.put("dataEfetivacao", LocalDateTime.now().toString());
@@ -120,4 +117,5 @@ public class ServicoDeVendas {
         }
     }
 }
+
 

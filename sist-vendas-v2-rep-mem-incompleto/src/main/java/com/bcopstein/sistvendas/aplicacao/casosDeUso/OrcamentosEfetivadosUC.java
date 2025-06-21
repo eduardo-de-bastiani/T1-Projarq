@@ -19,7 +19,10 @@ public class OrcamentosEfetivadosUC {
     }
 
     public List<OrcamentoDTO> run(String dataInicio, String dataFim){ 
-        List<OrcamentoModel> orcamentos = servicoDeVendas.orcamentosDatas(dataInicio, dataFim);
-        return OrcamentoDTO.fromModel(orcamentos);
+        // List<OrcamentoModel> orcamentos = servicoDeVendas.orcamentosDatas(dataInicio, dataFim);
+        // return OrcamentoDTO.fromModel(orcamentos);
+        return null; // Temporário, será implementado no ServicoDeRegistro
     }
 }
+
+

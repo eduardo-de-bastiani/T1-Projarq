@@ -12,17 +12,12 @@ import java.util.List;
 public interface RegistroImpostoRepository extends JpaRepository<RegistroImposto, Long> {
     
     @Query("SELECT r FROM RegistroImposto r WHERE YEAR(r.dataEfetivacao) = :ano AND MONTH(r.dataEfetivacao) = :mes")
-    List<RegistroImposto> findByMesAno(@Param("mes") int mes, @Param("ano") int ano);
+    List<RegistroImposto> findByAnoAndMes(@Param("ano") int ano, @Param("mes") int mes);
     
-    @Query("SELECT COALESCE(SUM(r.valorVendido), 0) FROM RegistroImposto r WHERE YEAR(r.dataEfetivacao) = :ano AND MONTH(r.dataEfetivacao) = :mes")
-    Double sumValorVendidoByMesAno(@Param("mes") int mes, @Param("ano") int ano);
+    @Query("SELECT SUM(r.valorVendido) FROM RegistroImposto r WHERE YEAR(r.dataEfetivacao) = :ano AND MONTH(r.dataEfetivacao) = :mes")
+    Double sumValorVendidoByAnoAndMes(@Param("ano") int ano, @Param("mes") int mes);
     
-    @Query("SELECT COALESCE(SUM(r.valorImposto), 0) FROM RegistroImposto r WHERE YEAR(r.dataEfetivacao) = :ano AND MONTH(r.dataEfetivacao) = :mes")
-    Double sumValorImpostoByMesAno(@Param("mes") int mes, @Param("ano") int ano);
-    
-    @Query("SELECT COUNT(r) FROM RegistroImposto r WHERE YEAR(r.dataEfetivacao) = :ano AND MONTH(r.dataEfetivacao) = :mes")
-    Long countByMesAno(@Param("mes") int mes, @Param("ano") int ano);
-    
-    List<RegistroImposto> findByDataEfetivacaoBetween(LocalDateTime inicio, LocalDateTime fim);
+    @Query("SELECT SUM(r.valorImposto) FROM RegistroImposto r WHERE YEAR(r.dataEfetivacao) = :ano AND MONTH(r.dataEfetivacao) = :mes")
+    Double sumValorImpostoByAnoAndMes(@Param("ano") int ano, @Param("mes") int mes);
 }
 

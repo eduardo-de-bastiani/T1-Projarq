@@ -39,9 +39,19 @@ public class ItemPedidoModel {
         this.pedido = pedido;
     }
 
+    public double getPrecoUnitario() {
+        return produto.getPrecoUnitario();
+    }
+
+    public long getCodigoProduto() {
+        return produto.getId();
+    }
+
     @Override
     public String toString() {
         return "ItemPedidoModel [produto=" + produto + ", quantidade=" + quantidade + ", orcamento=" + orcamento
                 + ", pedido=" + pedido + "]";
     }
 }
+
+

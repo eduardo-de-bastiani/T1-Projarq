@@ -32,6 +32,10 @@ public class Produto{
         return this.descricao;
     }
 
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
     public double getPrecoUnitario() {
         return this.precoUnitario;
     }
@@ -43,9 +47,9 @@ public class Produto{
     @Override
     public String toString() {
         return "{" +
-            " codigo='" + getId() + "'" +
-            ", descricao='" + getDescricao() + "'" +
-            ", precoUnitario='" + getPrecoUnitario() + "'" +
+            " codigo=\'" + getId() + "\'" +
+            ", descricao=\'" + getDescricao() + "\'" +
+            ", precoUnitario=\'" + getPrecoUnitario() + "\'" +
             "}";
     }
 
@@ -61,3 +65,4 @@ public class Produto{
         return new Produto(model.getId(), model.getDescricao(), model.getPrecoUnitario());
     }
 }
+

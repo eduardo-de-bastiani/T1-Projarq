@@ -4,13 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/registro")
 @CrossOrigin(origins = "*")
-public class RegistroImpostoController {
+public class RegistroController {
 
     @Autowired
     private RegistroImpostoService service;
@@ -26,22 +23,10 @@ public class RegistroImpostoController {
     }
 
     @GetMapping("/relatorio/{ano}/{mes}")
-    public ResponseEntity<RelatorioVendasResponse> gerarRelatorioMensal(
-            @PathVariable int ano, 
-            @PathVariable int mes) {
+    public ResponseEntity<RelatorioVendasResponse> gerarRelatorio(@PathVariable int ano, @PathVariable int mes) {
         try {
             RelatorioVendasResponse relatorio = service.gerarRelatorio(mes, ano);
             return ResponseEntity.ok(relatorio);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    @GetMapping("/impostos")
-    public ResponseEntity<List<RegistroImposto>> listarTodosRegistros() {
-        try {
-            List<RegistroImposto> registros = service.buscarTodosRegistros();
-            return ResponseEntity.ok(registros);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }

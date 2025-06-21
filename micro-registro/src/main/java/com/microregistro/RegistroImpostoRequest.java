@@ -1,20 +1,17 @@
 package com.microregistro;
 
-import java.time.LocalDateTime;
-
 public class RegistroImpostoRequest {
     private Long orcamentoId;
     private Double valorVendido;
     private Double valorImposto;
     private String localidade;
-    private LocalDateTime dataEfetivacao;
+    private String dataEfetivacao;
     private String detalhesImposto;
 
-    // Construtores
     public RegistroImpostoRequest() {}
 
     public RegistroImpostoRequest(Long orcamentoId, Double valorVendido, Double valorImposto, 
-                                 String localidade, LocalDateTime dataEfetivacao, String detalhesImposto) {
+                                 String localidade, String dataEfetivacao, String detalhesImposto) {
         this.orcamentoId = orcamentoId;
         this.valorVendido = valorVendido;
         this.valorImposto = valorImposto;
@@ -24,22 +21,52 @@ public class RegistroImpostoRequest {
     }
 
     // Getters e Setters
-    public Long getOrcamentoId() { return orcamentoId; }
-    public void setOrcamentoId(Long orcamentoId) { this.orcamentoId = orcamentoId; }
+    public Long getOrcamentoId() {
+        return orcamentoId;
+    }
 
-    public Double getValorVendido() { return valorVendido; }
-    public void setValorVendido(Double valorVendido) { this.valorVendido = valorVendido; }
+    public void setOrcamentoId(Long orcamentoId) {
+        this.orcamentoId = orcamentoId;
+    }
 
-    public Double getValorImposto() { return valorImposto; }
-    public void setValorImposto(Double valorImposto) { this.valorImposto = valorImposto; }
+    public Double getValorVendido() {
+        return valorVendido;
+    }
 
-    public String getLocalidade() { return localidade; }
-    public void setLocalidade(String localidade) { this.localidade = localidade; }
+    public void setValorVendido(Double valorVendido) {
+        this.valorVendido = valorVendido;
+    }
 
-    public LocalDateTime getDataEfetivacao() { return dataEfetivacao; }
-    public void setDataEfetivacao(LocalDateTime dataEfetivacao) { this.dataEfetivacao = dataEfetivacao; }
+    public Double getValorImposto() {
+        return valorImposto;
+    }
 
-    public String getDetalhesImposto() { return detalhesImposto; }
-    public void setDetalhesImposto(String detalhesImposto) { this.detalhesImposto = detalhesImposto; }
+    public void setValorImposto(Double valorImposto) {
+        this.valorImposto = valorImposto;
+    }
+
+    public String getLocalidade() {
+        return localidade;
+    }
+
+    public void setLocalidade(String localidade) {
+        this.localidade = localidade;
+    }
+
+    public String getDataEfetivacao() {
+        return dataEfetivacao;
+    }
+
+    public void setDataEfetivacao(String dataEfetivacao) {
+        this.dataEfetivacao = dataEfetivacao;
+    }
+
+    public String getDetalhesImposto() {
+        return detalhesImposto;
+    }
+
+    public void setDetalhesImposto(String detalhesImposto) {
+        this.detalhesImposto = detalhesImposto;
+    }
 }
 

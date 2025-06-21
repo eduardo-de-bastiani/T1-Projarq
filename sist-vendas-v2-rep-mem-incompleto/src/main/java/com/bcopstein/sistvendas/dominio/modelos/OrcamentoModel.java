@@ -29,6 +29,15 @@ public class OrcamentoModel {
         this.efetivado = false;
     }
 
+    public OrcamentoModel(long id, double custoItens, double imposto, double custoConsumidor, List<ItemPedidoModel> itens) {
+        this.id = id;
+        this.custoItens = custoItens;
+        this.imposto = imposto;
+        this.custoConsumidor = custoConsumidor;
+        this.itens = itens;
+        this.efetivado = false;
+    }
+
     public void addItensPedido(PedidoModel pedido){
         for(ItemPedidoModel itemPedido:pedido.getItens()){
             itens.add(itemPedido);
@@ -103,6 +112,10 @@ public class OrcamentoModel {
         this.data = data;
     }
 
+    public double getSubtotal() {
+        return itens.stream().mapToDouble(item -> item.getPrecoUnitario() * item.getQuantidade()).sum();
+    }
+
     @Override
     public String toString() {
         return "OrcamentoModel [id=" + id + ", itens=" + itens + ", custoItens=" + custoItens + ", imposto=" + imposto
@@ -111,3 +124,5 @@ public class OrcamentoModel {
     }
 
 }
+
+

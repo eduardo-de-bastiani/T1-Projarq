@@ -35,10 +35,12 @@ public class CriaOrcamentoUC {
             pedido.addItem(itemPedido);
         }
         
-        servicoDeVendas.criaPedido(pedido);
-        OrcamentoModel orcamento = servicoDeVendas.criaOrcamento(pedido);
+        // servicoDeVendas.criaPedido(pedido);
+        OrcamentoModel orcamento = servicoDeVendas.criaOrcamento(pedido.getItens(), pedido.getLocal().toString());
         // servicoDeVendas.relacionaItensOrcamento(orcamento, pedido);
 
         return OrcamentoDTO.fromModel(orcamento);
     }
 }
+
+
